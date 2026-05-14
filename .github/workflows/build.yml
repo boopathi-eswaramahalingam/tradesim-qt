@@ -15,28 +15,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install MinGW
-        uses: egor-tensin/setup-mingw@v2
+      - name: Install Python
+        uses: actions/setup-python@v5
         with:
-          platform: x64
+          python-version: '3.11'
+
+      - name: Install aqtinstall
+        run: pip install aqtinstall
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
-        with:
-          version: '6.8.0'
-          host: 'windows'
-          target: 'desktop'
-          arch: 'win64_msvc2019_64'
-          modules: 'qtcharts'
+        uses: aqt install-qt windows desktop 6.8.0 win64_msvc2019_64 -m qtcharts
 
       - name: Configure
-        run: cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release
+        run: cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2019_64
 
       - name: Build
-        run: cmake --build build/desktop/desktop-release --config Release --parallel
+        run: cmake --build build/desktop-release --config Release --parallel
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: TradeSim-Windows
-          path: build.desktop-release/TradeSim.exe
+          path: build/desktop-release/Release/TradeSim.exe
