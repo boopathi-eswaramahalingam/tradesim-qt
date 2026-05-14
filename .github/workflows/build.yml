@@ -22,7 +22,7 @@ jobs:
           host: 'windows'
           target: 'desktop'
           arch: 'win64_mingw'
-          modules: 'qtcharts qtsql'
+          modules: 'qtcharts'
 
       - name: Configure
         run: cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release
