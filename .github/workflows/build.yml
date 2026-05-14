@@ -35,7 +35,8 @@ jobs:
 
       - name: Configure
         shell: cmd
-        run: cmake -B build/desktop-release -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2022_64 -DCMAKE_C_COMPILER=cl.exe -DCMAKE_CXX_COMPILER=cl.exe
+        run: cmake -B build/desktop-release -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2022_64
+
       - name: Build
         shell: cmd
         run: cmake --build build/desktop-release --parallel
