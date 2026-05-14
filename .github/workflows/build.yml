@@ -1,0 +1,37 @@
+name: CI
+
+on:
+ push:
+   branches: [main,develop]
+ pull_request:
+   branches: [main]
+
+jobs:
+  build-desktop:
+    name: Desktop Build (Windows)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.11.0'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_mingw'
+          modules: 'qtcharts qtsql'
+
+      - name: Configure
+        run: cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build/desktop/desktop-release --parallel
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TradeSim-Windows
+          path: build.desktop-release/TradeSim.exe
