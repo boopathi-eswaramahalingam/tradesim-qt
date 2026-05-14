@@ -1,0 +1,46 @@
+# Build directories
+build/
+out/
+
+# Qt generated
+*.pro.user
+*.qmlc
+*.jsc
+moc_*
+qrc_*
+ui_*
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakePresets.json
+
+# Compiled
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.lib
+
+# Android
+*.apk
+*.aab
+android-build/
+
+# WASM
+*.wasm
+*.js.map
+
+# IDE
+.vscode/
+.idea/
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
