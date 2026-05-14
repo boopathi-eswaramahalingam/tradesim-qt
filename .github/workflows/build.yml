@@ -27,16 +27,20 @@ jobs:
         run: pip install aqtinstall
 
       - name: Install Qt
-        run: aqt install-qt windows desktop 6.8.0 win64_msvc2022_64 -m qtcharts
+        run: aqt install-qt windows desktop 6.8.0 win64_msvc2022_64 -m qtcharts -O D:\Qt
+
+      
+      - name: Install Ninja
+        run: choco install ninja -y
 
       - name: Configure
-        run: cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2022_64 -DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl
+        run: cmake -B build/desktop-release -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2022_64
 
       - name: Build
-        run: cmake --build build/desktop-release --config Release --parallel
+        run: cmake --build build/desktop-release --parallel
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: TradeSim-Windows
-          path: build/desktop-release/Release/TradeSim.exe
+          path: build/desktop-release/TradeSim.exe
