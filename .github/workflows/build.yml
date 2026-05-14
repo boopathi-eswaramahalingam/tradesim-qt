@@ -34,7 +34,7 @@ jobs:
         run: choco install ninja -y
 
       - name: Configure
-        run: cmake -B build/desktop-release -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2022_64
+        run: cmake -B build/desktop-release -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2022_64 -DCMAKE_CXX_COMPILER="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\cl.exe" -DCMAKE_C_COMPILER="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\cl.exe"
 
       - name: Build
         run: cmake --build build/desktop-release --parallel
