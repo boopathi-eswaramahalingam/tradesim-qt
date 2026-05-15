@@ -19,10 +19,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential libgl1-mesa-dev
-          sudo apt-get remove -y cmake
-          sudo apt-get install -y cmake
-          which cmake
-          cmake --version
 
       - name: Install aqtinstall
         run: pip3 install aqtinstall
@@ -30,11 +26,17 @@ jobs:
       - name: Install Qt
         run: aqt install-qt linux desktop 6.8.0 linux_gcc_64 -m qtcharts -O ~/Qt
 
+      - name: Install CMake
+        run: |
+          wget -q https://github.com/Kitware/CMake/releases/download/v3.28.4/cmake-3.28.4-linux-x86_64.sh
+          sudo sh cmake-3.28.4-linux-x86_64.sh --prefix=/opt/cmake --skip-license --exclude-subdir
+          echo "/opt/cmake/bin" >> $GITHUB_PATH
+
       - name: Configure
-        run: /usr/bin/cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
+        run: cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
 
       - name: Build
-        run: /usr/bin/cmake --build build/desktop-release --parallel
+        run: cmake --build build/desktop-release --parallel
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
