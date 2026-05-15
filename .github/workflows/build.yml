@@ -30,11 +30,11 @@ jobs:
       - name: Install Qt
         run: aqt install-qt linux desktop 6.8.0 linux_gcc_64 -m qtcharts -O ~/Qt
 
-      - name: Configure
-        run: /usr/bin/cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
-
-      - name: Build
-        run: /usr/bin/cmake --build build/desktop-release --parallel
+      - name: Debug cmake
+        run: |
+          ls /usr/share/cmake-3.22/Modules/ | grep -i "Cxx" || echo "modules missing"
+          ls /usr/lib/cmake/ || echo "no cmake lib"
+          dpkg -l cmake cmake-data
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
