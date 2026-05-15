@@ -27,7 +27,7 @@ jobs:
         run: aqt install-qt windows desktop 6.8.0 win64_mingw -m qtcharts -O D:\Qt
 
       - name: Install MinGW compiler
-        run: aqt install-tool windows desktop tools_mingw1310_64 -O D:\Qt
+        run: aqt install-tool windows desktop tools_mingw90_64 -O D:\Qt
 
       - name: Configure
         run: cmake -B build/desktop-release -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\mingw_64 -DCMAKE_CXX_COMPILER=D:\Qt\Tools\mingw1310_64\bin\g++.exe -DCMAKE_C_COMPILER=D:\Qt\Tools\mingw1310_64\bin\gcc.exe
