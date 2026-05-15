@@ -15,9 +15,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup MSVC
-        uses: ilammy/msvc-dev-cmd@v1
-
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -26,15 +23,15 @@ jobs:
       - name: Install aqtinstall
         run: pip install aqtinstall
 
-      - name: Install Qt
-        run: aqt install-qt windows desktop 6.8.0 win64_msvc2022_64 -m qtcharts -O D:\Qt
+      - name: Install Qt MinGW kit
+        run: aqt install-qt windows desktop 6.8.0 win64_mingw -m qtcharts -O D:\Qt
+
+      - name: Install MinGW compiler
+        run: aqt install-tool windows desktop tools_mingw1310_64 -O D:\Qt
 
       - name: Configure
-        run: |
-          $env:CC = "cl"
-          $env:CXX = "cl"
-          cmake -B build/desktop-release -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2022_64
-          
+        run: cmake -B build/desktop-release -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\mingw_64 -DCMAKE_CXX_COMPILER=D:\Qt\Tools\mingw1310_64\bin\g++.exe -DCMAKE_C_COMPILER=D:\Qt\Tools\mingw1310_64\bin\gcc.exe
+
       - name: Build
         run: cmake --build build/desktop-release --parallel
 
