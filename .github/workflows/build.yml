@@ -30,8 +30,11 @@ jobs:
         run: aqt install-qt windows desktop 6.8.0 win64_msvc2022_64 -m qtcharts -O D:\Qt
 
       - name: Configure
-        run: cmake -B build/desktop-release -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2022_64 -DCMAKE_CXX_COMPILER=cl.exe -DCMAKE_C_COMPILER=cl.exe
-
+        run: |
+          $env:CC = "cl"
+          $env:CXX = "cl"
+          cmake -B build/desktop-release -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2022_64
+          
       - name: Build
         run: cmake --build build/desktop-release --parallel
 
