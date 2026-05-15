@@ -34,12 +34,10 @@ jobs:
           ls /opt/cmake/
 
       - name: Configure
-        run: |
-          /opt/cmake/cmake-3.28.4-linux-x86_64/bin/cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
+        run: /opt/cmake/bin/cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
 
       - name: Build
-        run: |
-          /opt/cmake/cmake-3.28.4-linux-x86_64/bin/cmake --build build/desktop-release --parallel
+        run: /opt/cmake/bin/cmake --build build/desktop-release --parallel
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
