@@ -15,6 +15,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -26,17 +29,14 @@ jobs:
       - name: Install Qt
         run: aqt install-qt windows desktop 6.8.0 win64_msvc2022_64 -m qtcharts -O D:\Qt
 
-      - name: Install CMake
-        uses: lukka/get-cmake@latest
-
       - name: Configure
-        run: cmake -B build/desktop-release -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2022_64
+        run: cmake -B build/desktop-release -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2022_64 -DCMAKE_CXX_COMPILER=cl.exe -DCMAKE_C_COMPILER=cl.exe
 
       - name: Build
-        run: cmake --build build/desktop-release --config Release --parallel
+        run: cmake --build build/desktop-release --parallel
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: TradeSim-Windows
-          path: build/desktop-release/Release/TradeSim.exe
+          path: build/desktop-release/TradeSim.exe
