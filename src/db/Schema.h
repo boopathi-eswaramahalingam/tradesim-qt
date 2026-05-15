@@ -9,8 +9,8 @@ public:
     static bool createTables();
 
 private:
-    static bool createUserTable();
+    static bool createUsersTable();
     static bool createStocksTable();
-    static bool createPortfoliotable();
+    static bool createPortfolioTable();
     static bool createTradeHistoryTable();
 };

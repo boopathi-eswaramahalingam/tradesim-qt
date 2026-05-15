@@ -20,4 +20,4 @@ private:
     Database &operator=(const Database &) = delete;
 
     QSqlDatabase m_db;
-}
+};
