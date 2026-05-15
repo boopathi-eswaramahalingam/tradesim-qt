@@ -20,8 +20,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential cmake g++ libgl1-mesa-dev
 
-      - name: Check g++ version
-        run: g++ --version
+      - name: Verify C++ Compiler
+        run: |
+          which g++
+          g++ --version
 
       - name: Install Python
         uses: actions/setup-python@v5
