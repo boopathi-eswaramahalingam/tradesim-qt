@@ -31,6 +31,9 @@ jobs:
       - name: Install Qt
         run: aqt install-qt linux desktop 6.8.0 linux_gcc_64 -m qtcharts -O ~/Qt
 
+      - name: Install CMake
+        run: pip install cmake
+
       - name: Configure
         run: cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=~/Qt/6.8.0/gcc_64
 
