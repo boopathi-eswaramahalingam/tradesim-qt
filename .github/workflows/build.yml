@@ -34,8 +34,10 @@ jobs:
           ls /opt/cmake/
 
       - name: Configure
-        run: /opt/cmake/bin/cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
-
+        run: |
+          ls /opt/cmake/share/
+          ls /opt/cmake/share/cmake-3.28/Modules/ | grep -i "Cxx" || echo "Cxx modules missing"
+          /opt/cmake/bin/cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
       - name: Build
         run: /opt/cmake/bin/cmake --build build/desktop-release --parallel
 
