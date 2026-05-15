@@ -31,10 +31,14 @@ jobs:
           wget -q https://github.com/Kitware/CMake/releases/download/v3.28.4/cmake-3.28.4-linux-x86_64.sh
           sudo mkdir -p /opt/cmake
           sudo sh cmake-3.28.4-linux-x86_64.sh --prefix=/opt/cmake --skip-license
-          echo "/opt/cmake/cmake-3.28.4-linux-x86_64/bin" >> $GITHUB_PATH
+          ls /opt/cmake/
 
       - name: Configure
-        run: cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
+        run: |
+          export PATH=/opt/cmake/cmake-3.28.4-linux-x86_64/bin:$PATH
+          which cmake
+          cmake --version
+          cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
 
       - name: Build
         run: cmake --build build/desktop-release --parallel
