@@ -26,6 +26,9 @@ jobs:
       - name: Install Qt
         run: aqt install-qt windows desktop 6.8.0 win64_msvc2022_64 -m qtcharts -O D:\Qt
 
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+
       - name: Configure
         run: cmake -B build/desktop-release -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH=D:\Qt\6.8.0\msvc2022_64
 
