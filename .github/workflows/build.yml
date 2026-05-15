@@ -18,33 +18,19 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake g++ libgl1-mesa-dev
-
-      - name: Verify C++ Compiler
-        run: |
-          which g++
-          g++ --version
-
-      - name: Install Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+          sudo apt-get install -y build-essential cmake libgl1-mesa-dev
 
       - name: Install aqtinstall
-        run: pip install aqtinstall
+        run: pip3 install aqtinstall
 
       - name: Install Qt
         run: aqt install-qt linux desktop 6.8.0 linux_gcc_64 -m qtcharts -O ~/Qt
 
       - name: Configure
-        run: |
-          unset LD_LIBRARY_PATH
-          /usr/bin/cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
+        run: cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64
 
       - name: Build
-        run: |
-          unset LD_LIBRARY_PATH
-          /usr/bin/cmake --build build/desktop-release --parallel
+        run: cmake --build build/desktop-release --parallel
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
