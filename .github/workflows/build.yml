@@ -36,12 +36,20 @@ jobs:
       - name: Fix CMake case sensitivity
         run: |
           cd /opt/cmake/share/cmake-3.28/Modules
-          sudo ln -s CMakeDetermineCXXCompiler.cmake CMakeDetermineCxxCompiler.cmake
-          sudo ln -s CMakeCXXInformation.cmake CMakeCxxInformation.cmake
-          sudo ln -s CMakeCXXCompiler.cmake.in CMakeCxxCompiler.cmake.in
+          sudo ln -sf CMakeDetermineCXXCompiler.cmake CMakeDetermineCxxCompiler.cmake
+          sudo ln -sf CMakeCXXInformation.cmake CMakeCxxInformation.cmake
+          sudo ln -sf CMakeCXXCompiler.cmake.in CMakeCxxCompiler.cmake.in
+          sudo ln -sf CMakeTestCXXCompiler.cmake CMakeTestCxxCompiler.cmake
+          sudo ln -sf CMakeCXXCompilerABI.cpp CMakeCxxCompilerABI.cpp
+          sudo ln -sf CMakeCXXCompilerId.cpp.in CMakeCxxCompilerId.cpp.in
 
       - name: Configure
-        run: /opt/cmake/bin/cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
+        run: |
+          rm -rf build/desktop-release
+          /opt/cmake/bin/cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
+      
+      - name: Build
+        run: /opt/cmake/bin/cmake --build build/desktop-release --parallel
         
       - name: Upload artifact
         uses: actions/upload-artifact@v4
