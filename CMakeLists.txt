@@ -12,6 +12,8 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Sql Charts)
 
 set(SOURCES
     src/main.cpp
+    src/db/Database.cpp
+    src/db/Schema.cpp
 )
 
 qt_add_executable(TradeSim ${SOURCES})
