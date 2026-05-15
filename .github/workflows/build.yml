@@ -37,7 +37,12 @@ jobs:
         run: aqt install-qt linux desktop 6.8.0 linux_gcc_64 -m qtcharts -O ~/Qt
 
       - name: Configure
-        run: cmake -B build/desktop-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64
+        run: |
+          cmake -B build/desktop-release \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 \
+            -DCMAKE_CXX_COMPILER=/usr/bin/g++ \
+            -DCMAKE_C_COMPILER=/usr/bin/gcc
 
       - name: Build
         run: cmake --build build/desktop-release --parallel
