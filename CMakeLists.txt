@@ -15,6 +15,7 @@ set(SOURCES
     src/db/Database.cpp
     src/db/Schema.cpp
     src/db/UserRepository.cpp
+    src/db/StockRepository.cpp
     src/db/PortfolioRepository.cpp
     src/db/TradeRepository.cpp
     src/engine/TradeEngine.cpp
