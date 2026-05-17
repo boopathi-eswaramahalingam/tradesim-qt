@@ -14,6 +14,13 @@ set(SOURCES
     src/main.cpp
     src/db/Database.cpp
     src/db/Schema.cpp
+    src/db/UserRepository.cpp
+    src/db/PortfolioRepository.cpp
+    src/db/TradeRepository.cpp
+    src/engine/TradeEngine.cpp
+    src/engine/PriceSimulator.cpp
+    src/ui/LoginDialog.cpp
+    src/ui/MainWindow.cpp
 )
 
 qt_add_executable(TradeSim ${SOURCES})
