@@ -13,4 +13,5 @@ private:
     static bool createStocksTable();
     static bool createPortfolioTable();
     static bool createTradeHistoryTable();
+    static bool createPriceHistoryTable();
 };

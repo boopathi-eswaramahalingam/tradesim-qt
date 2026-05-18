@@ -1,6 +1,8 @@
 #include "PriceSimulator.h"
 
 #include "../db/StockRepository.h"
+#include "../db/PriceHistoryRepository.h"
+
 #include <QDebug>
 #include <QRandomGenerator>
 
@@ -13,6 +15,15 @@ PriceSimulator::PriceSimulator(QObject *parent)
 void PriceSimulator::start(int intervalMs)
 {
     m_stocks = StockRepository::getAllStocks();
+
+    // restore last known prices from history
+    for (auto &stock : m_stocks)
+    {
+        double last = PriceHistoryRepository::getLastPrice(stock.symbol);
+        if (last > 0.0)
+            stock.price = last;
+    }
+
     qDebug() << "Price simulator starting, interval:" << intervalMs << "ms";
     m_timer.start(intervalMs);
 }
@@ -31,6 +42,7 @@ void PriceSimulator::onTick()
         stock.changePercent = ((newPrice - oldPrice) / oldPrice) * 100.0;
         stock.price = newPrice;
         StockRepository::updatePrice(stock.symbol, newPrice);
+        PriceHistoryRepository::insertTick(stock.symbol, newPrice);
     }
 
     qDebug() << "Tick - prices updated for" << m_stocks.size() << "stocks";

@@ -18,6 +18,7 @@ set(SOURCES
     src/db/StockRepository.cpp
     src/db/PortfolioRepository.cpp
     src/db/TradeRepository.cpp
+    src/db/PriceHistoryRepository.cpp
     src/engine/TradeEngine.cpp
     src/engine/PriceSimulator.cpp
     src/ui/LoginDialog.cpp
