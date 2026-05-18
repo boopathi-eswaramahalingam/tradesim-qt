@@ -204,7 +204,7 @@ void MainWindow::refreshChart()
     else
     {
         auto ticks = PriceHistoryRepository::getTicks(
-            m_selectedSymbol, m_intervalSecs * 50);
+            m_selectedSymbol, m_intervalSecs);
 
         QLineSeries *series = new QLineSeries();
         for (int i = 0; i < ticks.size(); ++i)
