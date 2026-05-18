@@ -103,3 +103,55 @@ jobs:
         run: |
           cd build/test
           ctest --output-on-failure
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-22.04
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libgl1-mesa-dev
+
+      - name: Install aqtinstall
+        run: pip3 install aqtinstall
+
+      - name: Install Qt
+        run: aqt install-qt linux desktop 6.8.0 linux_gcc_64 -m qtcharts -O ~/Qt
+
+      - name: Install CMake
+        run: |
+          wget -q https://github.com/Kitware/CMake/releases/download/v3.28.4/cmake-3.28.4-linux-x86_64.sh
+          sudo mkdir -p /opt/cmake
+          sudo sh cmake-3.28.4-linux-x86_64.sh --prefix=/opt/cmake --skip-license
+
+      - name: Fix CMake case sensitivity
+        run: |
+          cd /opt/cmake/share/cmake-3.28/Modules
+          sudo ln -sf CMakeDetermineCXXCompiler.cmake CMakeDetermineCxxCompiler.cmake
+          sudo ln -sf CMakeCXXInformation.cmake CMakeCxxInformation.cmake
+          sudo ln -sf CMakeCXXCompiler.cmake.in CMakeCxxCompiler.cmake.in
+          sudo ln -sf CMakeTestCXXCompiler.cmake CMakeTestCxxCompiler.cmake
+          sudo ln -sf CMakeCXXCompilerABI.cpp CMakeCxxCompilerABI.cpp
+          sudo ln -sf CMakeCXXCompilerId.cpp.in CMakeCxxCompilerId.cpp.in
+
+      - name: Configure
+        run: /opt/cmake/bin/cmake -B build/release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.8.0/gcc_64 -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc
+
+      - name: Build
+        run: /opt/cmake/bin/cmake --build build/release --parallel
+
+      - name: Rename binary
+        run: mv build/release/TradeSim TradeSim-Linux
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: TradeSim-Linux
+          generate_release_notes: true
