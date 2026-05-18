@@ -60,7 +60,7 @@ void MainWindow::setupMarketTab()
     QWidget *tab = new QWidget;
     QVBoxLayout *layout = new QVBoxLayout(tab);
 
-    m_marketTable = new QTableWidget(0, 6, tab);
+    m_marketTable = new QTableWidget(0, 7, tab);
     m_marketTable->setHorizontalHeaderLabels({"", "Symbol", "Company", "Price (Rs.)", "Change %", "Buy", "Sell"});
     m_marketTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_marketTable->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -98,6 +98,7 @@ void MainWindow::setupHistoryTab()
 
     m_historyTable = new QTableWidget(0, 6, tab);
     m_historyTable->setHorizontalHeaderLabels({"Time", "Symbol", "Type", "Qty", "Price (Rs.)", "Total (Rs.)"});
+    m_historyTable->horizotalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_historyTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     layout->addWidget(m_historyTable);
