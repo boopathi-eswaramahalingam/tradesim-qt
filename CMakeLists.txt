@@ -43,3 +43,7 @@ if(EMSCRIPTEN)
         -sEXPORTED_RUNTIME_METHODS=FS
     )
 endif()
+
+enable_testing()
+
+add_subdirectory(tests)
