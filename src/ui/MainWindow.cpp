@@ -3,6 +3,7 @@
 #include "../db/PortfolioRepository.h"
 #include "../db/TradeRepository.h"
 #include "../db/StockRepository.h"
+#include "../db/PriceHistoryRepository.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -10,9 +11,11 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QWidget>
+#include <QtCharts/QChart>
+#include <QtCharts/QCandlestickSet>
 
 MainWindow::MainWindow(const User &user, QWidget *parent)
-    : QMainWindow(parent), m_engine(user), m_simulator(new PriceSimulator(this))
+    : QMainWindow(parent), m_engine(user), m_simulator(new PriceSimulator(this)), m_intervalSecs(60), m_candlesMode(false)
 {
     setupUi();
     m_stocks = StockRepository::getAllStocks();
@@ -52,7 +55,7 @@ void MainWindow::setupUi()
     layout->addWidget(m_tabs);
 
     setCentralWidget(central);
-    resize(900, 650);
+    resize(900, 700);
 }
 
 void MainWindow::setupMarketTab()
@@ -69,13 +72,66 @@ void MainWindow::setupMarketTab()
 
     connect(m_marketTable, &QTableWidget::cellClicked, this, &MainWindow::onStockSelected);
 
-    m_chartLabel = new QLabel("Select a stock to view chart", tab);
-    m_chartLabel->setAlignment(Qt::AlignCenter);
+    setupChart();
 
     layout->addWidget(m_marketTable);
-    layout->addWidget(m_chartLabel);
+    layout->addWidget(m_chartView->parentWidget());
 
     m_tabs->addTab(tab, "Market");
+}
+
+void MainWindow::setupChart()
+{
+    // Chart type buttons
+    QPushButton *lineBtn = new QPushButton("Line");
+    QPushButton *candleBtn = new QPushButton("Candle");
+    lineBtn->setCheckable(true);
+    candleBtn->setCheckable(true);
+    lineBtn->setChecked(true);
+
+    m_chartTypeGroup = new QButtonGroup(this);
+    m_chartTypeGroup->addButton(lineBtn, 0);
+    m_chartTypeGroup->addButton(candleBtn, 1);
+    m_chartTypeGroup->setExclusive(true);
+
+    // Interval buttons
+    QPushButton *btn1m = new QPushButton("1m");
+    QPushButton *btn5m = new QPushButton("5m");
+    QPushButton *btn30m = new QPushButton("30m");
+    QPushButton *btn1h = new QPushButton("1h");
+    btn1m->setCheckable(true);
+    btn5m->setCheckable(true);
+    btn30m->setCheckable(true);
+    btn1h->setCheckable(true);
+    btn1m->setChecked(true);
+
+    m_intervalGroup = new QButtonGroup(this);
+    m_intervalGroup->addButton(btn1m, 60);
+    m_intervalGroup->addButton(btn5m, 300);
+    m_intervalGroup->addButton(btn30m, 1800);
+    m_intervalGroup->addButton(btn1h, 3600);
+    m_intervalGroup->setExclusive(true);
+
+    QHBoxLayout *controls = new QHBoxLayout;
+    controls->addWidget(lineBtn);
+    controls->addWidget(candleBtn);
+    controls->addStretch();
+    controls->addWidget(btn1m);
+    controls->addWidget(btn5m);
+    controls->addWidget(btn30m);
+    controls->addWidget(btn1h);
+
+    m_chartView = new QChartView(this);
+    m_chartView->setRenderHint(QPainter::Antialiasing);
+    m_chartView->setMinimumHeight(250);
+
+    QWidget *chartWidget = new QWidget(this);
+    QVBoxLayout *chartLayout = new QVBoxLayout(chartWidget);
+    chartLayout->addLayout(controls);
+    chartLayout->addWidget(m_chartView);
+
+    connect(m_chartTypeGroup, &QButtonGroup::idClicked, this, &MainWindow::onChartTypeChanged);
+    connect(m_intervalGroup, &QButtonGroup::idClicked, this, &MainWindow::onIntervalChanged);
 }
 
 void MainWindow::setupPortfolioTab()
@@ -104,6 +160,60 @@ void MainWindow::setupHistoryTab()
 
     layout->addWidget(m_historyTable);
     m_tabs->addTab(tab, "History");
+}
+
+void MainWindow::onChartTypeChanged(int id)
+{
+    m_candlesMode = (id == 1);
+    refreshChart();
+}
+
+void MainWindow::onIntervalChanged(int id)
+{
+    m_intervalSecs = id;
+    refreshChart();
+}
+
+void MainWindow::refreshChart()
+{
+    if (m_selectedSymbol.isEmpty())
+        return;
+
+    QChart *chart = new QChart();
+    chart->setTitle(m_selectedSymbol);
+    chart->legend()->hide();
+
+    if (m_candlesMode)
+    {
+        auto candles = PriceHistoryRepository::getCandles(
+            m_selectedSymbol, m_intervalSecs, 50);
+
+        QCandlestickSeries *series = new QCandlestickSeries();
+        series->setIncreasingColor(QColor(Qt::darkGreen));
+        series->setDecreasingColor(QColor(Qt::red));
+
+        for (const auto &c : candles)
+        {
+            auto *set = new QCandlestickSet(
+                c.open, c.high, c.low, c.close, c.timestamp.toMSecsSinceEpoch());
+            series->append(set);
+        }
+        chart->addSeries(series);
+        chart->createDefaultAxes();
+    }
+    else
+    {
+        auto ticks = PriceHistoryRepository::getTicks(
+            m_selectedSymbol, m_intervalSecs * 50);
+
+        QLineSeries *series = new QLineSeries();
+        for (int i = 0; i < ticks.size(); ++i)
+            series->append(i, ticks[i]);
+
+        chart->addSeries(series);
+        chart->createDefaultAxes();
+    }
+    m_chartView->setChart(chart);
 }
 
 void MainWindow::onPricesUpdated(const QList<Stock> &stocks)
@@ -143,7 +253,7 @@ void MainWindow::onStockSelected(int row, int column)
     if (row < 0 || row >= m_stocks.size())
         return;
     m_selectedSymbol = m_stocks[row].symbol;
-    m_chartLabel->setText("Selected: " + m_selectedSymbol + " | Price: Rs." + QString::number(m_stocks[row].price, 'f', 2));
+    refreshChart();
 }
 
 void MainWindow::onBuyClicked()
