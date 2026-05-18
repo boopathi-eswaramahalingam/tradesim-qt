@@ -5,6 +5,12 @@
 #include <QTableWidget>
 #include <QLabel>
 #include <QPushButton>
+#include <QButtonGroup>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QCandlestickSeries>
+#include <QtCharts/QValueAxis>
+#include <QtCharts/QDateTimeAxis>
 #include <QTimer>
 
 #include "../models/Models.h"
@@ -24,6 +30,8 @@ private slots:
     void onStockSelected(int row, int column);
     void onBuyClicked();
     void onSellClicked();
+    void onChartTypeChanged(int id);
+    void onIntervalChanged(int id);
 
 private:
     // Core
@@ -36,7 +44,13 @@ private:
     QTableWidget *m_portfolioTable;
     QTableWidget *m_historyTable;
     QLabel *m_balanceLabel;
-    QLabel *m_chartLabel;
+
+    // Chart
+    QChartView *m_chartView;
+    QButtonGroup *m_chartTypeGroup;
+    QButtonGroup *m_intervalGroup;
+    int m_intervalSecs;
+    bool m_candlesMode;
 
     // State
     QList<Stock> m_stocks;
@@ -46,7 +60,9 @@ private:
     void setupMarketTab();
     void setupPortfolioTab();
     void setupHistoryTab();
+    void setupChart();
     void refreshPortfolio();
     void refreshHistory();
+    void refreshChart();
     void updateBalance();
 };

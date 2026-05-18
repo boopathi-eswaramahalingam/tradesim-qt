@@ -10,6 +10,8 @@ bool Schema::createTables()
         return false;
     if (!createTradeHistoryTable())
         return false;
+    if (!createPriceHistoryTable())
+        return false;
 
     qDebug() << "All tables created successfully.";
     return true;
@@ -66,5 +68,17 @@ bool Schema::createTradeHistoryTable()
         "price        REAL    NOT NULL,"
         "timestamp    TEXT    NOT NULL,"
         "FOREIGN KEY (user_id) REFERENCES users(id)"
+        ")");
+}
+
+bool Schema::createPriceHistoryTable()
+{
+    QSqlQuery query;
+    return query.exec(
+        "CREATE TABLE IF NOT EXISTS price_history ("
+        "id           INTEGER PRIMARY KEY AUTOINCREMENT ,"
+        "symbol       TEXT     NOT NULL,"
+        "price        REAL     NOT NULL,"
+        "timestamp    TEXT     NOT NULL"
         ")");
 }
