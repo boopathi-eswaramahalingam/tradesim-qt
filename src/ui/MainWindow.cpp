@@ -98,7 +98,7 @@ void MainWindow::setupHistoryTab()
 
     m_historyTable = new QTableWidget(0, 6, tab);
     m_historyTable->setHorizontalHeaderLabels({"Time", "Symbol", "Type", "Qty", "Price (Rs.)", "Total (Rs.)"});
-    m_historyTable->horizotalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    m_historyTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_historyTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     layout->addWidget(m_historyTable);
