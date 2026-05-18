@@ -60,8 +60,9 @@ void MainWindow::setupMarketTab()
     QWidget *tab = new QWidget;
     QVBoxLayout *layout = new QVBoxLayout(tab);
 
-    m_marketTable = new QTableWidget(0, 7, tab);
-    m_marketTable->setHorizontalHeaderLabels({"", "Symbol", "Company", "Price (Rs.)", "Change %", "Buy", "Sell"});
+    m_marketTable = new QTableWidget(0, 6, tab);
+    m_marketTable->setHorizontalHeaderLabels({"Symbol", "Company", "Price (Rs.)", "Change %", "Buy", "Sell"});
+    m_marketTable->verticalHeader()->setVisible(false);
     m_marketTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_marketTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_marketTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -114,24 +115,23 @@ void MainWindow::onPricesUpdated(const QList<Stock> &stocks)
     {
         const Stock &s = stocks[i];
 
-        m_marketTable->setItem(i, 0, new QTableWidgetItem(QString::number(i + 1)));
-        m_marketTable->setItem(i, 1, new QTableWidgetItem(s.symbol));
-        m_marketTable->setItem(i, 2, new QTableWidgetItem(s.name));
-        m_marketTable->setItem(i, 3, new QTableWidgetItem("Rs." + QString::number(s.price, 'f', 2)));
+        m_marketTable->setItem(i, 0, new QTableWidgetItem(s.symbol));
+        m_marketTable->setItem(i, 1, new QTableWidgetItem(s.name));
+        m_marketTable->setItem(i, 2, new QTableWidgetItem("Rs." + QString::number(s.price, 'f', 2)));
 
         QTableWidgetItem *changeItem = new QTableWidgetItem(
             QString::number(s.changePercent, 'f', 2) + "%");
         changeItem->setForeground(s.changePercent >= 0 ? Qt::darkGreen : Qt::red);
-        m_marketTable->setItem(i, 4, changeItem);
+        m_marketTable->setItem(i, 3, changeItem);
 
         QPushButton *buyBtn = new QPushButton("Buy");
         QPushButton *sellBtn = new QPushButton("Sell");
 
+        m_marketTable->setCellWidget(i, 4, buyBtn);
+        m_marketTable->setCellWidget(i, 5, sellBtn);
+
         connect(buyBtn, &QPushButton::clicked, this, &MainWindow::onBuyClicked);
         connect(sellBtn, &QPushButton::clicked, this, &MainWindow::onSellClicked);
-
-        m_marketTable->setCellWidget(i, 5, buyBtn);
-        m_marketTable->setCellWidget(i, 6, sellBtn);
     }
 
     refreshPortfolio();
@@ -154,7 +154,7 @@ void MainWindow::onBuyClicked()
 
     for (int i = 0; i < m_marketTable->rowCount(); ++i)
     {
-        if (m_marketTable->cellWidget(i, 5) == btn)
+        if (m_marketTable->cellWidget(i, 4) == btn)
         {
             m_selectedSymbol = m_stocks[i].symbol;
             break;
@@ -196,7 +196,7 @@ void MainWindow::onSellClicked()
 
     for (int i = 0; i < m_marketTable->rowCount(); ++i)
     {
-        if (m_marketTable->cellWidget(i, 6) == btn)
+        if (m_marketTable->cellWidget(i, 5) == btn)
         {
             m_selectedSymbol = m_stocks[i].symbol;
             break;
